@@ -1,6 +1,7 @@
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.math.BigInteger;
 
@@ -17,7 +18,7 @@ public class pass1 {
         //Read file
         try {
 
-            File myObj = new File("in.txt");
+            File myObj = new File("in3.txt");
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
@@ -42,7 +43,8 @@ public class pass1 {
     }
 
     public ArrayList<String> Generate_LOCCR() {
-//        System.out.println("\n\n\nAFTER REMOVING COMMENTS: \n");
+
+        String progName = "";
         for (int j = 0; j < prog.size(); j++) {
             String sWithoutComments ="";
             String sWithComments = prog.get(j);
@@ -62,16 +64,86 @@ public class pass1 {
 
         System.out.println("\n\n\nGENERATE LOCATION COUNTER: \n");
         for (int i = 0; i < prog.size(); i++) {
-
+            int k =i+1;
             String s = prog.get(i);
             String[] line = s.split(" ");
+
+            // START CHECKING FOR ERRORS
+            if(i==0 && !line[1].equals("Start")){
+                System.out.println("Program failed to start.");
+                System.exit(0);
+            }
+
+            else if(line.length == 2){
+                if(line[0].charAt(0) == '+'){
+                    if(!validateInstruction(line[0].substring(1))){
+                         System.out.println("Instruction " + line[0].substring(1) +" at line "+ k + " doesn't exist");
+                         System.exit(0);
+                    }
+                }
+                else if(line[0].charAt(0) == '$'){
+                    if(!validateInstruction(line[0].substring(1))){
+                        System.out.println("Instruction " + line[0].substring(1) +" at line "+ k + " doesn't exist");
+                        System.exit(0);
+                    }
+                }
+                else if(!validateInstruction(line[0])){
+                    System.out.println("Instruction " + line[0].substring(1) +" at line "+ k + " doesn't exist");
+                    System.exit(0);
+                }
+            }
+            else if(line.length == 3 && i!=0){
+                if(line[1].charAt(0) == '+'){
+                    if(!validateInstruction(line[1].substring(1))){
+                        System.out.println("Instruction " + line[1].substring(1) +" at line "+ k + " doesn't exist");
+                        System.exit(0);
+                    }
+                }
+                else if(line[1].charAt(0) == '$'){
+                    if(!validateInstruction(line[1].substring(1))){
+                        System.out.println("Instruction " + line[1].substring(1) +" at line "+ k + " doesn't exist");
+                        System.exit(0);
+                    }
+                }
+                else if(!validateInstruction(line[1])){
+                    System.out.println("Instruction " + line[1].substring(1) +" at line "+ k + " doesn't exist");
+                    System.exit(0);
+                }
+            }
+            else if(line.length==1 && i!=0){
+                if(line[0].charAt(0) == '+'){
+                    if(!validateInstruction(line[0].substring(1))){
+                        System.out.println("Instruction " + line[0].substring(1) +" at line "+ k + " doesn't exist");
+                        System.exit(0);
+                    }
+                }
+                else if(line[0].charAt(0) == '$'){
+                    if(!validateInstruction(line[0].substring(1))){
+                        System.out.println("Instruction " + line[0].substring(1) +" at line "+ k + " doesn't exist");
+                        System.exit(0);
+                    }
+                }
+                else if(!validateInstruction(line[0])){
+                    System.out.println("Instruction " + line[0].substring(1) +" at line "+ k + " doesn't exist");
+                    System.exit(0);
+                }
+            }
+
+
+            //START GENERATING LOCATION COUNTER
+           if(line.length>1){
             if (line[1].equals("Start")) {
                 start = new BigInteger(line[2], 16);
                 String addressHex = String.format("%04X", start);
                 s = addressHex + " " + s;
                 startAddress = addressHex;
                 prog.set(i, s);
-            } else if (line[1].equals("RESW") && Integer.parseInt(line[2]) > 1) {
+            } else if(line[0].equals("BASE") || line[0].equals("Base")){
+                continue;
+            } else if(line[0].equals("End") || line[0].equals("END")){
+                break;
+            }
+                else if (line[1].equals("RESW") && Integer.parseInt(line[2]) > 1) {
                 int address = Integer.parseInt(line[2]) * 3;
                 String num = Integer.toHexString(address);
                 BigInteger n = new BigInteger(num, 16);
@@ -79,7 +151,27 @@ public class pass1 {
                 s = addressHex + " " + s;
                 prog.set(i, s);
                 start = start.add(n);
-            } else if (i == 1) {
+            }
+            else if (line[1].equals("RESDW") && Integer.parseInt(line[2]) > 1) {
+                int address = Integer.parseInt(line[2]) * 6;
+                String num = Integer.toHexString(address);
+                BigInteger n = new BigInteger(num, 16);
+                String addressHex = String.format("%04X", start);
+                s = addressHex + " " + s;
+                prog.set(i, s);
+                start = start.add(n);
+            }
+            else if (line[1].equals("RESB")) {
+                int address = Integer.parseInt(line[2]);
+                String num = Integer.toHexString(address);
+                BigInteger n = new BigInteger(num, 16);
+                String addressHex = String.format("%04X", start);
+                s = addressHex + " " + s;
+                prog.set(i, s);
+                start = start.add(n);
+            }
+
+            else if (i == 1) {
                 prog.set(i, startAddress + " " + s);
                 start = start.add(new BigInteger("3", 16));
             }else if (line[1].equals("EQU")) {
@@ -98,12 +190,99 @@ public class pass1 {
                 String addressHex = String.format("%04X", start);
                 s = addressHex + " " + s;
                 prog.set(i, s);
-                start = start.add(new BigInteger("3", 16));
+                if(line.length==3){
+                    //FORMAT 4 INSTRUCTIONS
+                    if(line[1].charAt(0) == '+'){
+                        start = start.add(new BigInteger("4", 16));
+                    }
+                    //FORMAT 2 INSTRUCTIONS
+                    else if(line[1].equals("ADDR") || line[1].equals("COMPR") || line[1].equals("CLEAR") || line[1].equals("DIVR")
+                              || line[1].equals("MULR") || line[1].equals("RMO") || line[1].equals("SHIFTL") | line[1].equals("SHIFTR")
+                              || line[1].equals("SUBR") || line[1].equals("SVC") || line[1].equals("TIXR")){
+
+                        start = start.add(new BigInteger("2", 16));
+
+                    }
+                    else if(line[1].equals("BYTE") || line[1].equals("FIX") || line[1].equals("FLOAT") || line[1].equals("HIO")
+                            || line[1].equals("NORM") || line[1].equals("SIO") || line[1].equals("TIO")){
+
+                        if(line[1].equals("BYTE") && line[2].charAt(0)=='C' && line[2].charAt(1)== 39 ){
+                            int n = line[2].substring(2,line[2].length()-1).length();
+                            String num = Integer.toHexString(n);
+                            BigInteger x = new BigInteger(num, 16);
+                            start = start.add(x);
+                        }
+                        else if(line[1].equals("BYTE") && line[2].charAt(0)=='X' &&line[2].charAt(1)== 39){
+                            start = start.add(new BigInteger("1", 16));
+                        }
+                        else
+                            start = start.add(new BigInteger("1", 16));
+                    }
+                    else{
+                        start = start.add(new BigInteger("3", 16));
+                    }
+                }
+                else if(line.length==2){
+                    if(line[0].charAt(0)=='+'){
+                        start = start.add(new BigInteger("4", 16));
+                    }
+                    else if(line[0].equals("ADDR") || line[0].equals("COMPR") || line[0].equals("CLEAR") || line[0].equals("DIVR")
+                            || line[0].equals("MULR") || line[0].equals("RMO") || line[0].equals("SHIFTL") | line[0].equals("SHIFTR")
+                            || line[0].equals("SUBR") || line[0].equals("SVC") || line[0].equals("TIXR")){
+
+                        start = start.add(new BigInteger("2", 16));
+
+                    }
+                    else if(line[0].equals("BYTE") || line[0].equals("FIX") || line[0].equals("FLOAT") || line[0].equals("HIO")
+                            || line[0].equals("NORM") || line[0].equals("SIO") || line[0].equals("TIO")){
+
+                        if(line[0].equals("BYTE") && line[1].charAt(0)=='C' && line[1].charAt(1)== 39 ){
+                            int n = line[1].substring(2,line[1].length()-1).length();
+                            String num = Integer.toHexString(n);
+                            BigInteger x = new BigInteger(num, 16);
+                            start = start.add(x);
+                        }
+                        else
+                            start = start.add(new BigInteger("1", 16));
+                    }
+
+                    else{
+                        start = start.add(new BigInteger("3", 16));
+                    }
+                }
+
+
             }
         }
+             else {
+               String addressHex = String.format("%04X", start);
+               s = addressHex + " " + s;
+               prog.set(i, s);
+                 if(line[0].equals("ADDR") || line[0].equals("COMPR") || line[0].equals("CLEAR") || line[0].equals("DIVR")
+                       || line[0].equals("MULR") || line[0].equals("RMO") || line[0].equals("SHIFTL") | line[0].equals("SHIFTR")
+                       || line[0].equals("SUBR") || line[0].equals("SVC") || line[0].equals("TIXR")){
+                     start = start.add(new BigInteger("2", 16));
+                 }
+                 else if(line[0].charAt(0)=='+'){
+                     start = start.add(new BigInteger("4", 16));
+                 }
+                 else{
+                     start = start.add(new BigInteger("3", 16));
+                 }
+             }
 
-        for (int i = 0; i < prog.size(); i++) {
-            System.out.println(prog.get(i));
+        }
+        try{
+            File file = new File("LOCCTR.txt");
+            FileOutputStream fos = new FileOutputStream(file);
+            OutputStreamWriter osw = new OutputStreamWriter(fos);
+             for (int i = 0; i < prog.size(); i++) {
+                 osw.write(prog.get(i)+"\n");
+             }
+            osw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
 
         return prog;
@@ -119,9 +298,37 @@ public class pass1 {
             }
         }
 
-        for (int i = 0; i < symbols.size(); i++) {
-            System.out.println(symbols.get(i));
+        try{
+            File file = new File("SYMBOLS.txt");
+            FileOutputStream fos = new FileOutputStream(file);
+            OutputStreamWriter osw = new OutputStreamWriter(fos);
+            for (int i = 0; i < symbols.size(); i++) {
+                osw.write(symbols.get(i)+"\n");
+            }
+            osw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
         return symbols;
+    }
+
+    public boolean validateInstruction(String s){
+        String[] instructions = new String[]{"ADD", "ADDF", "ADDR", "AND", "CLEAR", "COMP", "COMPF", "COMPR", "DIV", "DIVF",
+                                 "DIVR", "FIX", "FLOAT", "HIO", "J", "JEQ", "JGT", "JLT", "JSUB", "LDA", "LDB",
+                                 "LDCH", "LDF", "LDL", "LDS", "LDT", "LDX", "LPS", "MUL", "MULF", "MULR", "OR",
+                                 "NORM", "RD", "RMO", "RSUB", "SHIFTL", "SHIFTR", "SIO", "SSK", "STL", "STA", "STB",
+                                 "STCH", "STCHI", "STF", "STS", "STSW", "STT", "STX", "SUB", "SUBF", "SUBR", "SVC",
+                                  "TD", "TIO", "TIX", "TIXR", "WD"};
+
+        List<String> instructionSet = Arrays.asList(instructions);
+        if(instructionSet.contains(s) || s.equals("BASE")
+                || s.equals("Base") || s.equals("END") || s.equals("End") || s.equals("EQU")
+                || s.equals("Equ") || s.equals("RESW") || s.equals("RESDW") || s.equals("RESB")
+                || s.equals("WORD") || s.equals("BYTE"))
+            return true;
+        else
+            return false;
+
     }
 }

@@ -64,7 +64,7 @@ public class pass1 {
                     break;
             }
             prog.set(j, sWithoutComments);
-          // System.out.println(prog.get(j));
+            // System.out.println(prog.get(j));
         }
 
 
@@ -92,6 +92,10 @@ public class pass1 {
                         System.exit(0);
                     }
                 }
+                else if(line[0].equals("RESDW") && (line[1].charAt(0)=='#' || line[1].charAt(0)=='@')){
+                    System.out.println("Instruction RESDW doesn't support indirect or immediate addressing.LINE " + k);
+                    System.exit(0);
+                }
                 else if(!validateInstruction(line[0])){
                     System.out.println("Instruction " + line[0] +" at line "+ k + " doesn't exist");
                     System.exit(0);
@@ -108,7 +112,12 @@ public class pass1 {
                     if(!validateInstruction(line[1].substring(1))){
                         System.out.println("Instruction " + line[1].substring(1) +" at line "+ k + " doesn't exist");
                         System.exit(0);
+                        //hello
                     }
+                }
+                else if(line[1].equals("RESDW") && (line[2].charAt(0)=='#' || line[2].charAt(0)=='@')){
+                    System.out.println("Instruction RESDW doesn't support indirect or immediate addressing. LINE " + k);
+                    System.exit(0);
                 }
                 else if(!validateInstruction(line[1])){
                     System.out.println("Instruction " + line[1] +" at line "+ k + " doesn't exist");
@@ -369,7 +378,7 @@ public class pass1 {
 
                         }
                     }
-                     else if(line2.length==3){
+                    else if(line2.length==3){
                         if(line2[2].charAt(0)== 61){
                             lit = line2[2].substring(1);
 
@@ -413,9 +422,9 @@ public class pass1 {
             FileOutputStream fos = new FileOutputStream(file);
             OutputStreamWriter osw = new OutputStreamWriter(fos);
             if(noLits==0){
-               for (int i = 0; i < literals.size(); i++) {
-                  osw.write(literals.get(i)+"\n");
-               }
+                for (int i = 0; i < literals.size(); i++) {
+                    osw.write(literals.get(i)+"\n");
+                }
             }
             else{
                 osw.write("No Literals handled");

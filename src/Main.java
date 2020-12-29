@@ -10,6 +10,7 @@ public class Main {
         p1.read_file();
         p1.Generate_LOCCR();
         p1.Symbol_table();
+        p1.finalIteration();
         p1.Literals();
 
     }

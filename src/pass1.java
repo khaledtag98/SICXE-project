@@ -176,12 +176,12 @@ public class pass1 {
 
                     if (line[2].equals("*")) {
                         startEQU = start;
-                        System.out.println(startEQU);
+                        //System.out.println(startEQU);
                         String addressHex = String.format("%04X", startEQU);
                         s = addressHex + " " + s;
                         prog.set(i, s);
                         startEQU = startEQU.add(new BigInteger("3", 16));
-                        System.out.println(startEQU);
+                        //System.out.println(startEQU);
                     }
 
                 } else {
@@ -365,11 +365,13 @@ public class pass1 {
         int start = 1;
         int flagPosition;
         int noLits = 1;
+        int end = 1;
         for (int i = 1; i < prog.size(); i++) {
             String instruction = prog.get(i);
             String[] line = instruction.split(" ");
             if (line[1].equals("LTORG")) {
                 flagPosition = i;
+                end = 0;
                 add = line[0];
                 for (int j = start; j < flagPosition; j++) {
                     String instruction2 = prog.get(j);
@@ -398,13 +400,24 @@ public class pass1 {
                                 addressHex = String.format("%04X", addHex);
                                 add = addressHex;
                             }
+                            else if(line2[2].charAt(1)!='C' && line2[2].charAt(1)!='X')
+                            {
+                                size = Integer.toHexString(3);
+                                BigInteger sizeHex = new BigInteger(size, 16);
+                                BigInteger addHex = new BigInteger(add, 16);
+                                String addressHex = String.format("%04X", addHex);
+                                literals.add(lit + " " + size + " " + addressHex);
+                                addHex = addHex.add(sizeHex);
+                                addressHex = String.format("%04X", addHex);
+                                add = addressHex;
+                            }
 
 
                         }
                     } else if (line2.length == 3) {
                         if (line2[2].charAt(0) == 61) {
                             lit = line2[2].substring(1);
-
+                             System.out.println(lit);
                             if (line2[2].charAt(1) == 'X' && line2[2].charAt(2) == 39) {
                                 size = Integer.toHexString(line2[2].substring(2, line2[2].length() - 2).length() / 2);
                                 BigInteger sizeHex = new BigInteger(size, 16);
@@ -426,6 +439,17 @@ public class pass1 {
                                 addressHex = String.format("%04X", addHex);
                                 add = addressHex;
                             }
+                            else if(line2[2].charAt(1)!='C' && line2[2].charAt(1)!='X')
+                            {
+                                size = Integer.toHexString(3);
+                                BigInteger sizeHex = new BigInteger(size, 16);
+                                BigInteger addHex = new BigInteger(add, 16);
+                                String addressHex = String.format("%04X", addHex);
+                                literals.add(lit + " " + size + " " + addressHex);
+                                addHex = addHex.add(sizeHex);
+                                addressHex = String.format("%04X", addHex);
+                                add = addressHex;
+                            }
 
 
                         }
@@ -438,9 +462,9 @@ public class pass1 {
             }
 
         }
-        if(noLits == 0){
+         if(noLits == 0 && end == 1){
             String add = prog.get(prog.size()-1).split(" ")[0];
-            System.out.println(add);
+            //System.out.println(add);
             for(int i=0;i<prog.size() ; i++){
                 String s = prog.get(i);
                 String[] line = s.split(" ");
@@ -461,6 +485,17 @@ public class pass1 {
                         } else if (line[2].charAt(1) == 'C' && line[2].charAt(2) == 39) {
                             size = Integer.toHexString(line[2].substring(2, line[2].length() - 2).length());
 
+                            BigInteger sizeHex = new BigInteger(size, 16);
+                            BigInteger addHex = new BigInteger(add, 16);
+                            String addressHex = String.format("%04X", addHex);
+                            literals.add(lit + " " + size + " " + addressHex);
+                            addHex = addHex.add(sizeHex);
+                            addressHex = String.format("%04X", addHex);
+                            add = addressHex;
+                        }
+                        else if(line[2].charAt(1)!='C' && line[2].charAt(1)!='X')
+                        {
+                            size = Integer.toHexString(3);
                             BigInteger sizeHex = new BigInteger(size, 16);
                             BigInteger addHex = new BigInteger(add, 16);
                             String addressHex = String.format("%04X", addHex);
@@ -490,6 +525,17 @@ public class pass1 {
                         } else if (line[2].charAt(1) == 'C' && line[2].charAt(2) == 39) {
                             size = Integer.toHexString(line[2].substring(2, line[2].length() - 2).length());
 
+                            BigInteger sizeHex = new BigInteger(size, 16);
+                            BigInteger addHex = new BigInteger(add, 16);
+                            String addressHex = String.format("%04X", addHex);
+                            literals.add(lit + " " + size + " " + addressHex);
+                            addHex = addHex.add(sizeHex);
+                            addressHex = String.format("%04X", addHex);
+                            add = addressHex;
+                        }
+                        else if(line[2].charAt(1)!='C' && line[2].charAt(1)!='X')
+                        {
+                            size = Integer.toHexString(3);
                             BigInteger sizeHex = new BigInteger(size, 16);
                             BigInteger addHex = new BigInteger(add, 16);
                             String addressHex = String.format("%04X", addHex);

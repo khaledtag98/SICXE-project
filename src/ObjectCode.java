@@ -162,7 +162,10 @@ public class ObjectCode {
                           e="1";
                       else
                           e="0";
-                      displacement= decimalToHexa(Integer.parseInt(label));
+                      if(format==4 && label.length()<5){
+                          displacement= extend(decimalToHexa(Integer.parseInt(label)));
+                      }
+                      else displacement = label;
                       ObCode = getObjectHexa(OP+n+i+x+b+p+e) +displacement;
                       s = s+" "+ObCode;
                       ObjectCode.add(s);
@@ -344,7 +347,7 @@ public class ObjectCode {
                         if(isInteger(label)){
                             b="0";
                             p="0";
-                            if(format==4){
+                            if(format==4 && label.length()<5){
                             displacement= extend(decimalToHexa(Integer.parseInt(label)));
                             }
                             else

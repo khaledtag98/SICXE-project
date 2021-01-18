@@ -42,13 +42,13 @@ public class ObjectCode {
 
     public void calculateObjectCode(){
         getBaseAddress();
-        ObjectCode.add(0, LOCCTR.get(0)+"\t\t\t\t\t\t\t\tNo Object Code");
+        ObjectCode.add(0, LOCCTR.get(0)+"No Object Code");
         for(int j=1; j<LOCCTR.size();j++){
             String s = LOCCTR.get(j);
             String[] line = s.split(" ");
             if(line[0].equals("BASE"))
             {
-                s= s + "\t\t\t\t\t\t\t\tNo Object Code.";
+                s= s + " No Object Code.";
                 ObjectCode.add(s);
 
             }
@@ -56,7 +56,7 @@ public class ObjectCode {
                 if(instructionSet.getFormat(line[1])==1){
                     OP = instructionSet.getOpcode(line[1]);
                     ObCode = OP;
-                    s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                    s = s+" "+ObCode;
                     ObjectCode.add(s);
                     continue;
                 }
@@ -69,7 +69,7 @@ public class ObjectCode {
                     x="0";
                     displacement="000";
                     ObCode = getObjectHexa(OP+n+i+x+b+p+e)+displacement;
-                    s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                    s = s+" "+ObCode;
                     ObjectCode.add(s);
                     continue;
                 }
@@ -83,7 +83,7 @@ public class ObjectCode {
                 String instruction = filterInstruction(line[1]);
                 if(instruction.equals("RESB") || instruction.equals("RESW")){
                     ObCode = "No Object Code";
-                    s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                    s = s+" "+ObCode;
                     ObjectCode.add(s);
                     continue;
                 }
@@ -91,14 +91,14 @@ public class ObjectCode {
                     if(line[2].charAt(0)=='C' && line[2].charAt(1)==39 && line[2].charAt(line[2].length()-1)==39){
                         String Chars = line[2].substring(2, line[2].length()-2);
                         ObCode = getAsciiCode(Chars);
-                        s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                        s = s+" "+ObCode;
                         ObjectCode.add(s);
                         continue;
                     }
                     else if(line[2].charAt(0)=='X' && line[2].charAt(1)==39 && line[2].charAt(line[2].length()-1)==39){
                         String Chars = line[2].substring(2, line[2].length()-2);
                         ObCode = Chars;
-                        s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                        s = s+" "+ObCode;
                         ObjectCode.add(s);
                         continue;
                     }
@@ -144,14 +144,14 @@ public class ObjectCode {
                   if(line[2].charAt(0)=='C' && line[2].charAt(1)==39 && line[2].charAt(line[2].length()-1)==39){
                       String Chars = line[2].substring(2, line[2].length()-2);
                       ObCode = getAsciiCode(Chars);
-                      s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                      s = s+" "+ObCode;
                       ObjectCode.add(s);
                       continue;
                   }
                   else if(line[2].charAt(0)=='X' && line[2].charAt(1)==39 && line[2].charAt(line[2].length()-1)==39){
                       String Chars = line[2].substring(2, line[2].length()-2);
                       ObCode = Chars;
-                      s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                      s = s+" "+ObCode;
                       ObjectCode.add(s);
                       continue;
                   }
@@ -164,7 +164,7 @@ public class ObjectCode {
                           e="0";
                       displacement= decimalToHexa(Integer.parseInt(label));
                       ObCode = getObjectHexa(OP+n+i+x+b+p+e) +displacement;
-                      s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                      s = s+" "+ObCode;
                       ObjectCode.add(s);
                       continue;
 
@@ -175,7 +175,7 @@ public class ObjectCode {
                       e="1";
                       displacement = extend(labelAddress);
                       ObCode = getObjectHexa(OP+n+i+x+b+p+e) +displacement;
-                      s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                      s = s+" "+ObCode;
                       ObjectCode.add(s);
                       continue;
                   }
@@ -195,7 +195,7 @@ public class ObjectCode {
                               System.exit(1);
                           }
                           ObCode = getObjectHexa(OP+n+i+x+b+p+e) + displacement;
-                          s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                          s = s+" "+ObCode;
                           ObjectCode.add(s);
                           continue;
 
@@ -207,14 +207,14 @@ public class ObjectCode {
                   if(line[2].charAt(0)=='C' && line[2].charAt(1)==39 && line[2].charAt(line[2].length()-1)==39){
                       String Chars = line[2].substring(2, line[2].length()-2);
                       ObCode = getAsciiCode(Chars);
-                      s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                      s = s+" "+ObCode;
                       ObjectCode.add(s);
                       continue;
                   }
                   else if(line[2].charAt(0)=='X' && line[2].charAt(1)==39 && line[2].charAt(line[2].length()-1)==39){
                       String Chars = line[2].substring(2, line[2].length()-2);
                       ObCode = Chars;
-                      s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                      s = s+" "+ObCode;
                       ObjectCode.add(s);
                       continue;
                   }
@@ -229,7 +229,7 @@ public class ObjectCode {
                           R1 = getRegNo(registers[0]);
                           R2 = getRegNo(registers[1]);
                           ObCode = OP + R1 + R2;
-                          s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                          s = s+" "+ObCode;
                           ObjectCode.add(s);
                           continue;
                       }
@@ -241,14 +241,14 @@ public class ObjectCode {
                       R1 = getRegNo(line[2]);
                       R2 = "0";
                       ObCode = OP + R1 + R2;
-                      s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                      s = s+" "+ObCode;
                       ObjectCode.add(s);
                       continue;
                   }
               }
               else if(format==1){
                   ObCode = OP;
-                  s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                  s = s+" "+ObCode;
                   ObjectCode.add(s);
                   continue;
               }
@@ -261,7 +261,7 @@ public class ObjectCode {
                     String instruction = filterInstruction(line[2]);
                 if(instruction.equals("RESB") || instruction.equals("RESW") || line[0].equals("BASE")){
                     ObCode = "No Object Code";
-                    s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                    s = s+" "+ObCode;
                     ObjectCode.add(s);
                     continue;
                 }
@@ -269,14 +269,14 @@ public class ObjectCode {
                     if(line[3].charAt(0)=='C' && line[3].charAt(1)==39 && line[3].charAt(line[3].length()-1)==39){
                         String Chars = line[3].substring(2, line[3].length()-1);
                         ObCode = getAsciiCode(Chars);
-                        s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                        s = s+" "+ObCode;
                         ObjectCode.add(s);
                         continue;
                     }
                     else if(line[3].charAt(0)=='X' && line[3].charAt(1)==39 && line[3].charAt(line[3].length()-1)==39){
                         String Chars = line[3].substring(2, line[3].length()-1);
                         ObCode = Chars;
-                        s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                        s = s+" "+ObCode;
                         ObjectCode.add(s);
                         continue;
                     }
@@ -311,14 +311,14 @@ public class ObjectCode {
                         if(line[3].charAt(0)=='C' && line[3].charAt(1)==39 && line[3].charAt(line[3].length()-1)==39){
                             String Chars = line[3].substring(2, line[3].length()-1);
                             ObCode = getAsciiCode(Chars);
-                            s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                            s = s+" "+ObCode;
                             ObjectCode.add(s);
                             continue;
                         }
                         else if(line[3].charAt(0)=='X' && line[3].charAt(1)==39 && line[3].charAt(line[3].length()-1)==39){
                             String Chars = line[2].substring(2, line[3].length()-2);
                             ObCode = Chars;
-                            s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                            s = s+" "+ObCode;
                             ObjectCode.add(s);
                             continue;
                         }
@@ -337,7 +337,7 @@ public class ObjectCode {
                             e="1";
                             displacement =extend(labelAddress);
                             ObCode = getObjectHexa(OP+n+i+x+b+p+e) +displacement;
-                            s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                            s = s+" "+ObCode;
                             ObjectCode.add(s);
                             continue;
                         }
@@ -350,7 +350,7 @@ public class ObjectCode {
                             else
                                 displacement= decimalToHexa(Integer.parseInt(label));
                             ObCode = getObjectHexa(OP+n+i+x+b+p+e) +displacement;
-                            s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                            s = s+" "+ObCode;
                             ObjectCode.add(s);
                             continue;
 
@@ -369,7 +369,7 @@ public class ObjectCode {
                                     System.exit(1);
                                 }
                                 ObCode = getObjectHexa(OP+n+i+x+b+p+e) + displacement;
-                                s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                                s = s+" "+ObCode;
                                 ObjectCode.add(s);
                                 continue;
 
@@ -381,14 +381,14 @@ public class ObjectCode {
                         if(line[3].charAt(0)=='C' && line[3].charAt(1)==39 && line[3].charAt(line[3].length()-1)==39){
                             String Chars = line[2].substring(2, line[2].length()-2);
                             ObCode = getAsciiCode(Chars);
-                            s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                            s = s+" "+ObCode;
                             ObjectCode.add(s);
                             continue;
                         }
                         else if(line[3].charAt(0)=='X' && line[3].charAt(1)==39 && line[3].charAt(line[3].length()-1)==39){
                             String Chars = line[3].substring(2, line[3].length()-2);
                             ObCode = Chars;
-                            s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                            s = s+" "+ObCode;
                             ObjectCode.add(s);
                             continue;
                         }
@@ -403,7 +403,7 @@ public class ObjectCode {
                                 R1 = getRegNo(registers[0]);
                                 R2 = getRegNo(registers[1]);
                                 ObCode = OP + R1 + R2;
-                                s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                                s = s+" "+ObCode;
                                 ObjectCode.add(s);
                                 continue;
                             }
@@ -415,14 +415,14 @@ public class ObjectCode {
                             R1 = getRegNo(line[3]);
                             R2 = "0";
                             ObCode = OP + R1 + R2;
-                            s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                            s = s+" "+ObCode;
                             ObjectCode.add(s);
                             continue;
                         }
                     }
                     else if(format==1){
                         ObCode = OP;
-                        s = s+"\t\t\t\t\t\t\t\t"+ObCode;
+                        s = s+" "+ObCode;
                         ObjectCode.add(s);
                         continue;
                     }

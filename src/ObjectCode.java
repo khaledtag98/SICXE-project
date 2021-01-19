@@ -11,6 +11,7 @@ public class ObjectCode {
     ArrayList<String> LOCCTR = new ArrayList<>();
     ArrayList<String> symbols = new ArrayList<>();
     ArrayList<String> ObjectCode = new ArrayList<>();
+    ArrayList<String> Literals = new ArrayList<>();
     InstructionSet instructionSet = new InstructionSet();
     String n,i,x,b,p,e;
     String RA, RX, RL, RB, RS, RT, RF, SW;
@@ -31,9 +32,10 @@ public class ObjectCode {
     int errorFlag =0;
     int format;
     String binaryObjectCode;
-    public ObjectCode(ArrayList<String> LOCCTR, ArrayList<String> symbols ) {
+    public ObjectCode(ArrayList<String> LOCCTR, ArrayList<String> symbols, ArrayList<String> Literals ) {
         this.LOCCTR = LOCCTR;
         this.symbols = symbols;
+        this.Literals = Literals;
         calculateObjectCode();
         //calculateDisplacement5("007");
         //getObjectHexa("0110001011001111");
@@ -81,12 +83,14 @@ public class ObjectCode {
                 if(k>=LOCCTR.size())
                     break;
                 String instruction = filterInstruction(line[1]);
-                if(instruction.equals("RESB") || instruction.equals("RESW")){
+                if(instruction.equals("RESB") || instruction.equals("RESW") || instruction.equals("EQU")){
                     ObCode = "No Object Code";
                     s = s+" "+ObCode;
                     ObjectCode.add(s);
                     continue;
                 }
+
+
                 if(instruction.equals("BYTE") || instruction.equals("WORD")){
                     if(line[2].charAt(0)=='C' && line[2].charAt(1)==39 && line[2].charAt(line[2].length()-1)==39){
                         String Chars = line[2].substring(2, line[2].length()-2);
@@ -101,6 +105,14 @@ public class ObjectCode {
                         s = s+" "+ObCode;
                         ObjectCode.add(s);
                         continue;
+                    }
+                    else{
+                        String o = decimalToHexa(Integer.parseInt(line[2]));
+                        BigInteger bigInteger = new BigInteger(o, 16);
+                        String bb = String.format("%06X", bigInteger);
+                        ObCode = bb;
+                        s=s+" "+ ObCode;
+                        ObjectCode.add( s);
                     }
                 }
 
@@ -183,26 +195,40 @@ public class ObjectCode {
                       continue;
                   }
                   if(format==3){
-                      //System.out.println("LABEL: "+labelAddress);
                       e="0";
-
-
-                          try {
-                              calculateDisplacement3(labelAddress, PC);
-                          }
-                          catch (NumberFormatException ex){
-                              System.out.println("ITERATION "+j);
-                          }
-                          if(errorFlag==1){
-                              System.out.println("Format 3 is not compatible on line "+j);
-                              System.exit(1);
-                          }
-                          ObCode = getObjectHexa(OP+n+i+x+b+p+e) + displacement;
+                      //System.out.println("LABEL: "+labelAddress);
+                      if(line[2].charAt(0)=='=' && line[2].charAt(1)=='C' && line[2].charAt(2)==39&& line[2].charAt(line[2].length()-1)==39){
+                          getLiteralAddress(line[2].substring(1));
+                          calculateDisplacement3(labelAddress, PC);
+                          ObCode = getObjectHexa(OP + n+i+x+b+p+e)+displacement;
                           s = s+" "+ObCode;
                           ObjectCode.add(s);
                           continue;
+                      }
+                      else if(line[2].charAt(0)=='=' && line[2].charAt(1)=='X' && line[2].charAt(2)==39&& line[2].charAt(line[2].length()-1)==39){
+                          getLiteralAddress(line[2].substring(1));
+                          calculateDisplacement3(labelAddress, PC);
+                          ObCode = getObjectHexa(OP + n+i+x+b+p+e)+displacement;
+                          s = s+" "+ObCode;
+                          ObjectCode.add(s);
+                          continue;
+                      }
+                      else {
+                          try {
+                              calculateDisplacement3(labelAddress, PC);
+                          } catch (NumberFormatException ex) {
+                              System.out.println("ITERATION " + j);
+                          }
+                          if (errorFlag == 1) {
+                              System.out.println("Format 3 is not compatible on line " + j);
+                              System.exit(1);
+                          }
+                          ObCode = getObjectHexa(OP + n + i + x + b + p + e) + displacement;
+                          s = s + " " + ObCode;
+                          ObjectCode.add(s);
+                          continue;
 
-
+                      }
                   }
               }
               else if(format==5){
@@ -221,9 +247,24 @@ public class ObjectCode {
                       ObjectCode.add(s);
                       continue;
                   }
+                  else if(line[2].charAt(0)=='=' && line[2].charAt(1)=='C' && line[2].charAt(2)==39&& line[2].charAt(line[2].length()-1)==39){
+                      getLiteralAddress(line[2].substring(1));
+                  }
+                  else if(line[2].charAt(0)=='=' && line[2].charAt(1)=='X'  &&line[2].charAt(2)==39&& line[2].charAt(line[2].length()-1)==39){
+                      getLiteralAddress(line[2].substring(1));
+
+                  }
+                  else if(line[2].charAt(0)=='#'|| line[2].charAt(0)=='@'){
+                      System.out.println("Format 5 doesn't support indirect or immediate addressing");
+                      System.exit(1);
+                  }
                   calculateDisplacement3(labelAddress, PC);
                   calculateDisplacement5(displacement);
-                  System.out.println(OP+n+i+x+b+p+e+" "+displacement);
+                  ObCode = getObjectHexa(OP + n+i+x+b+p+e)+displacement;
+                  s = s+" "+ObCode;
+                  ObjectCode.add(s);
+                  continue;
+
               }
              else if(format==2){
                   if(line[2].length()>1) {
@@ -262,12 +303,13 @@ public class ObjectCode {
                     if(d>=LOCCTR.size())
                         break;
                     String instruction = filterInstruction(line[2]);
-                if(instruction.equals("RESB") || instruction.equals("RESW") || line[0].equals("BASE")){
+                if(instruction.equals("RESB") || instruction.equals("RESW") || instruction.equals("EQU") ){
                     ObCode = "No Object Code";
                     s = s+" "+ObCode;
                     ObjectCode.add(s);
                     continue;
                 }
+
                 if(instruction.equals("BYTE") || instruction.equals("WORD")){
                     if(line[3].charAt(0)=='C' && line[3].charAt(1)==39 && line[3].charAt(line[3].length()-1)==39){
                         String Chars = line[3].substring(2, line[3].length()-1);
@@ -282,6 +324,14 @@ public class ObjectCode {
                         s = s+" "+ObCode;
                         ObjectCode.add(s);
                         continue;
+                    }
+                    else{
+                        String o = decimalToHexa(Integer.parseInt(line[3]));
+                        BigInteger bigInteger = new BigInteger(o, 16);
+                        String bb = String.format("%06X", bigInteger);
+                        ObCode = bb;
+                        s=s+" "+ ObCode;
+                        ObjectCode.add(s);
                     }
                 }
                     if(getPC(LOCCTR.get(d)).equals("BASE")){
@@ -361,23 +411,44 @@ public class ObjectCode {
                         if(format==3){
                             //System.out.println("LABEL: "+labelAddress);
                             e="0";
-                                try {
-                                    calculateDisplacement3(labelAddress, PC);
-                                }
-                                catch (NumberFormatException ex){
-                                    System.out.println("ITERATION "+j);
-                                }
-                                if(errorFlag==1){
-                                    System.out.println("Format 3 is not compatible on line "+j);
-                                    System.exit(1);
-                                }
-                                ObCode = getObjectHexa(OP+n+i+x+b+p+e) + displacement;
+                            if(line[3].charAt(0)=='=' && line[3].charAt(1)=='C' && line[3].charAt(2)==39&& line[3].charAt(line[3].length()-1)==39){
+                                getLiteralAddress(line[3].substring(1));
+                                calculateDisplacement3(labelAddress, PC);
+                                ObCode = getObjectHexa(OP + n+i+x+b+p+e)+displacement;
                                 s = s+" "+ObCode;
                                 ObjectCode.add(s);
                                 continue;
+                            }
+                            else if(line[3].charAt(0)=='=' && line[3].charAt(1)=='X' && line[3].charAt(2)==39&& line[3].charAt(line[3].length()-1)==39){
+                                getLiteralAddress(line[3].substring(1));
+                                calculateDisplacement3(labelAddress, PC);
+                                ObCode = getObjectHexa(OP + n+i+x+b+p+e)+displacement;
+                                s = s+" "+ObCode;
+                                ObjectCode.add(s);
+                                continue;
+                            }
+                            else {
+                                try {
+                                    calculateDisplacement3(labelAddress, PC);
+                                } catch (NumberFormatException ex) {
+                                    System.out.println("ITERATION " + j);
+                                }
+                                if (errorFlag == 1) {
+                                    System.out.println("Format 3 is not compatible on line " + j);
+                                    System.exit(1);
+                                }
+                                if (line[3].charAt(0) == '=' && (line[3].charAt(1) == 'C' || line[3].charAt(1) == 'X') && line[3].charAt(2) == 39 && line[3].charAt(line[3].length() - 1) == 39) {
+                                    getLiteralAddress(line[3].substring(1));
+                                    calculateDisplacement3(labelAddress, PC);
 
-
+                                }
+                                ObCode = getObjectHexa(OP + n + i + x + b + p + e) + displacement;
+                                s = s + " " + ObCode;
+                                ObjectCode.add(s);
+                                continue;
+                            }
                         }
+
                     }
                     else if(format==5){
                         e="0";
@@ -395,9 +466,22 @@ public class ObjectCode {
                             ObjectCode.add(s);
                             continue;
                         }
+                        else if(line[3].charAt(0)=='=' && line[3].charAt(1)=='C' && line[3].charAt(2)==39&& line[3].charAt(line[3].length()-1)==39){
+                            getLiteralAddress(line[3].substring(1));
+                        }
+                        else if(line[3].charAt(0)=='=' && line[3].charAt(1)=='X' && line[3].charAt(2)==39&& line[3].charAt(line[3].length()-1)==39) {
+                            getLiteralAddress(line[3].substring(1));
+                        }
+                        else if(line[3].charAt(0)=='#'|| line[3].charAt(0)=='@'){
+                            System.out.println("Format 5 doesn't support indirect or immediate addressing");
+                            System.exit(1);
+                        }
                         calculateDisplacement3(labelAddress, PC);
                         calculateDisplacement5(displacement);
-                        System.out.println(OP+n+i+x+b+p+e+" "+displacement);
+                        ObCode = getObjectHexa(OP + n+i+x+b+p+e)+displacement;
+                        s = s+" "+ObCode;
+                        ObjectCode.add(s);
+                        continue;
                     }
                     else if(format==2){
                         if(line[3].length()>1) {
@@ -526,6 +610,17 @@ public class ObjectCode {
         }
         return "";
     }
+    public void getLiteralAddress(String lit){
+        for(int j=0; j<Literals.size();j++){
+            String s = Literals.get(j);
+            String[] line = s.split(" ");
+            if(line[0].equals(lit))
+            {
+                labelAddress = line[2];
+                return;
+            }
+        }
+    }
     public String filterLabel(String label){
         if(label.charAt(0)=='#' || label.charAt(0)=='@')
             label = label.substring(1);
@@ -559,7 +654,7 @@ public class ObjectCode {
         String disp = subtractHexa(labelAddress, PC);
         BigInteger displace = new BigInteger(disp,16);
 
-        if(!baseAddress.equals("-1")) {
+
             if (displace.compareTo(new BigInteger("0", 16)) == 1 && displace.compareTo(new BigInteger("7FF", 16)) == -1) {
                 p = "1";
                 b = "0";
@@ -593,11 +688,8 @@ public class ObjectCode {
                     displacement= String.format("%03X", displace);
                 }
             }
-        }
-        else{
-            System.out.println("Please set base address.");
-            System.exit(1);
-        }
+
+
     }
     public boolean isInteger(String s){
         try{

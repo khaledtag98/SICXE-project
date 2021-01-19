@@ -13,7 +13,7 @@ public class Main {
         p1.finalIteration();
         p1.Literals();
         ObjectCode ob = new ObjectCode(LOCCTR, symbols, Literals);
-        //Records Records = new Records(ob.ObjectCodeList());
+        Records Records = new Records(ob.ObjectCodeList());
         MRecords MR = new MRecords(LOCCTR);
 
 

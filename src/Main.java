@@ -1,6 +1,3 @@
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.util.*;
 
 public class Main {
@@ -16,6 +13,7 @@ public class Main {
         p1.finalIteration();
         p1.Literals();
         ObjectCode ob = new ObjectCode(LOCCTR, symbols, Literals);
+        Records Records = new Records(ob.ObjectCodeList());
 
     }
 

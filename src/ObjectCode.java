@@ -14,7 +14,7 @@ public class ObjectCode {
     ArrayList<String> Literals = new ArrayList<>();
     InstructionSet instructionSet = new InstructionSet();
     String n,i,x,b,p,e;
-    String RA, RX, RL, RB, RS, RT, RF, SW;
+    String RA="", RX="", RL="", RB="", RS="", RT="", RF="", SW="";
     String OP;
     String displacement;
     String label;
@@ -176,8 +176,9 @@ public class ObjectCode {
                           e="0";
                       if(format==4 && label.length()<5){
                           displacement= extend(decimalToHexa(Integer.parseInt(label)));
-                      }
-                      else displacement = label;
+                      }else
+                          displacement=decimalToHexa(Integer.parseInt(label));
+
                       ObCode = getObjectHexa(OP+n+i+x+b+p+e) +displacement;
                       s = s+" "+ObCode;
                       ObjectCode.add(s);
@@ -259,7 +260,7 @@ public class ObjectCode {
                       System.exit(1);
                   }
                   calculateDisplacement3(labelAddress, PC);
-                  calculateDisplacement5(displacement);
+                  calculateDisplacement5();
                   ObCode = getObjectHexa(OP + n+i+x+b+p+e)+displacement;
                   s = s+" "+ObCode;
                   ObjectCode.add(s);
@@ -477,7 +478,7 @@ public class ObjectCode {
                             System.exit(1);
                         }
                         calculateDisplacement3(labelAddress, PC);
-                        calculateDisplacement5(displacement);
+                        calculateDisplacement5();
                         ObCode = getObjectHexa(OP + n+i+x+b+p+e)+displacement;
                         s = s+" "+ObCode;
                         ObjectCode.add(s);
@@ -653,7 +654,9 @@ public class ObjectCode {
 
         String disp = subtractHexa(labelAddress, PC);
         BigInteger displace = new BigInteger(disp,16);
-
+        if(x.equals("1")&& !RX.equals("")){
+            displace = displace.add(new BigInteger(RX, 16));
+        }
 
             if (displace.compareTo(new BigInteger("0", 16)) == 1 && displace.compareTo(new BigInteger("7FF", 16)) == -1) {
                 p = "1";
@@ -761,8 +764,8 @@ public class ObjectCode {
         }
         return part;
     }
-    public void calculateDisplacement5(String disp){
-        BigInteger bg = new BigInteger(disp,16);
+    public void calculateDisplacement5(){
+        BigInteger bg = new BigInteger(displacement,16);
         BigInteger labelAdd = new BigInteger(labelAddress,16);
         BigInteger currPC = new BigInteger(PC, 16);
 

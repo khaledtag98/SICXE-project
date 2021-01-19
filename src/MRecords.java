@@ -1,8 +1,13 @@
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
 public class MRecords {
     ArrayList<String> program  = new ArrayList<>();
+    ArrayList<String> MR = new ArrayList<>();
     public  MRecords(ArrayList<String> program){
         this.program = program;
 
@@ -15,6 +20,7 @@ public class MRecords {
             else if(line.length==4)
                 getRecords(line[0], line[2], line[3]);
         }
+
     }
     public void getRecords(String address, String instruction, String label){
         BigInteger add;
@@ -26,8 +32,9 @@ public class MRecords {
             add = new BigInteger(address, 16);
             add = add.add(new BigInteger("1",16));
             loc = loc+ String.format("%06X", add)+".05";
-            System.out.println(loc);
+            MR.add(loc);
         }
 
     }
+
 }

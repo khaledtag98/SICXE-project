@@ -8,12 +8,14 @@ import java.util.ArrayList;
 public class Records {
     ArrayList<String> ObjectCode = new ArrayList<>();
     ArrayList<String> TRECORD = new ArrayList<>();
+    ArrayList<String> MRecord = new ArrayList<>();
     int TotalLength = 0 ;
     String HRecord;
     String ERecord;
     int cutt = 8;
-    public Records(ArrayList<String> ObjectCode){
+    public Records(ArrayList<String> ObjectCode, ArrayList<String> MRecord){
         this.ObjectCode = ObjectCode;
+        this.MRecord = MRecord;
         HTERecord();
     }
 
@@ -234,6 +236,9 @@ public class Records {
             osw.write(HRecord + "\n");
             for (int j = 0; j < TRECORD.size(); j++) {
                 osw.write(TRECORD.get(j) + "\n");
+            }
+            for (int j = 0; j < MRecord.size(); j++) {
+                osw.write(MRecord.get(j) + "\n");
             }
             osw.write(ERecord + "\n");
 

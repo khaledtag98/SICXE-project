@@ -136,6 +136,7 @@ public class pass1 {
 
             //START GENERATING LOCATION COUNTER
             if (line.length > 1) {
+
                 if (line[1].equals("Start")) {
                     start = new BigInteger(line[2], 16);
                     startEQU = new BigInteger(line[2], 16);
@@ -145,8 +146,15 @@ public class pass1 {
                     prog.set(i, s);
                 } else if (line[0].equals("BASE") || line[0].equals("Base")) {
                     continue;
-                }  else if (line[1].equals("RESW") && Integer.parseInt(line[2]) > 1) {
-                    int address = Integer.parseInt(line[2]) * 3;
+                }  else if (line[1].equals("RESW") || line[1].equals("RESDW") ) {
+                    int mul;
+                    if(line[1].equals("RESW"))
+                        mul = 3;
+                    else if(line[1].equals("RESDW"))
+                        mul=6;
+                    else
+                        mul=3;
+                    int address = Integer.parseInt(line[2]) * mul;
                     String num = Integer.toHexString(address);
                     BigInteger n = new BigInteger(num, 16);
                     String addressHex = String.format("%04X", start);
@@ -161,7 +169,9 @@ public class pass1 {
                     s = addressHex + " " + s;
                     prog.set(i, s);
                     start = start.add(n);
-                } else if (line[1].equals("RESB")) {
+                }
+
+                else if (line[1].equals("RESB")) {
                     int address = Integer.parseInt(line[2]);
                     String num = Integer.toHexString(address);
                     BigInteger n = new BigInteger(num, 16);
@@ -176,11 +186,12 @@ public class pass1 {
 
                     if (line[2].equals("*")) {
                         startEQU = start;
-
+                        //System.out.println(startEQU);
                         String addressHex = String.format("%04X", startEQU);
                         s = addressHex + " " + s;
                         prog.set(i, s);
                         startEQU = startEQU.add(new BigInteger("3", 16));
+                        //System.out.println(startEQU);
                     }
 
                 } else {

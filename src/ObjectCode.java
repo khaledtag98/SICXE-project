@@ -44,7 +44,7 @@ public class ObjectCode {
 
     public void calculateObjectCode(){
         getBaseAddress();
-        ObjectCode.add(0, LOCCTR.get(0)+"No Object Code");
+        ObjectCode.add(0, LOCCTR.get(0)+" No Object Code");
         for(int j=1; j<LOCCTR.size();j++){
             String s = LOCCTR.get(j);
             String[] line = s.split(" ");
@@ -83,7 +83,7 @@ public class ObjectCode {
                 if(k>=LOCCTR.size())
                     break;
                 String instruction = filterInstruction(line[1]);
-                if(instruction.equals("RESB") || instruction.equals("RESW") || instruction.equals("EQU")){
+                if(instruction.equals("RESB") || instruction.equals("RESW") || instruction.equals("EQU")|| instruction.equals("RESDW")){
                     ObCode = "No Object Code";
                     s = s+" "+ObCode;
                     ObjectCode.add(s);
@@ -304,7 +304,7 @@ public class ObjectCode {
                     if(d>=LOCCTR.size())
                         break;
                     String instruction = filterInstruction(line[2]);
-                if(instruction.equals("RESB") || instruction.equals("RESW") || instruction.equals("EQU") ){
+                if(instruction.equals("RESB") || instruction.equals("RESW") || instruction.equals("EQU") || instruction.equals("RESDW" )){
                     ObCode = "No Object Code";
                     s = s+" "+ObCode;
                     ObjectCode.add(s);
@@ -517,6 +517,9 @@ public class ObjectCode {
 
             }
         }
+        String oo = LOCCTR.get(LOCCTR.size()-1);
+        ObjectCode.add(oo+" No Object Code.");
+
     }
 
 

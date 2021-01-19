@@ -44,7 +44,7 @@ public class ObjectCode {
 
     public void calculateObjectCode(){
         getBaseAddress();
-        ObjectCode.add(0, LOCCTR.get(0)+"No Object Code");
+        ObjectCode.add(0, LOCCTR.get(0)+" "+"No Object Code");
         for(int j=1; j<LOCCTR.size();j++){
             String s = LOCCTR.get(j);
             String[] line = s.split(" ");
@@ -787,11 +787,13 @@ public class ObjectCode {
                 for (int j = 0; j < ObjectCode.size(); j++) {
                     osw.write(ObjectCode.get(j) + "\n");
                 }
-
             osw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public ArrayList<String> ObjectCodeList(){
+        return ObjectCode;
     }
 
 }

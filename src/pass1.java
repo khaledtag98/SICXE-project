@@ -25,7 +25,7 @@ public class pass1 {
         //Read file
         try {
 
-            File myObj = new File("program 7.txt");
+            File myObj = new File("in3.txt");
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
@@ -176,12 +176,11 @@ public class pass1 {
 
                     if (line[2].equals("*")) {
                         startEQU = start;
-                        //System.out.println(startEQU);
+
                         String addressHex = String.format("%04X", startEQU);
                         s = addressHex + " " + s;
                         prog.set(i, s);
                         startEQU = startEQU.add(new BigInteger("3", 16));
-                        //System.out.println(startEQU);
                     }
 
                 } else {

@@ -83,7 +83,7 @@ public class ObjectCode {
                 if(k>=LOCCTR.size())
                     break;
                 String instruction = filterInstruction(line[1]);
-                if(instruction.equals("RESB") || instruction.equals("RESW") || instruction.equals("EQU")){
+                if(instruction.equals("RESB") || instruction.equals("RESW") || instruction.equals("RESDW") ||instruction.equals("EQU")){
                     ObCode = "No Object Code";
                     s = s+" "+ObCode;
                     ObjectCode.add(s);
@@ -304,7 +304,7 @@ public class ObjectCode {
                 if(d>=LOCCTR.size())
                     break;
                 String instruction = filterInstruction(line[2]);
-                if(instruction.equals("RESB") || instruction.equals("RESW") || instruction.equals("EQU") ){
+                if(instruction.equals("RESB") || instruction.equals("RESW") ||instruction.equals("RESDW") || instruction.equals("EQU") ){
                     ObCode = "No Object Code";
                     s = s+" "+ObCode;
                     ObjectCode.add(s);

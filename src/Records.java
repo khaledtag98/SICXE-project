@@ -21,6 +21,7 @@ public class Records {
 
     public void HTERecord(){
         boolean firstIteration = true;
+        boolean addRecord = false;
         boolean ResetTRecordAndTotalLength = true;
         boolean LastiIeration = false;
         String[] nextLine = new String[20];
@@ -33,7 +34,8 @@ public class Records {
             String[] line = s.split(" ");
             if (ResetTRecordAndTotalLength){
                 ResetTRecordAndTotalLength = false;
-                if (!firstIteration){
+                if (addRecord){
+                    addRecord = false;
                     TRecord = TRecordLenghtCalc(TRecord,nextLine[0]);
                     TRECORD.add(TRecord);
                 }
@@ -60,13 +62,13 @@ public class Records {
                 int v = 0;
                 while (v == 0){
                     String[] l =  ObjectCode.get(ObjectCode.size()-1).split(" ");
-                    if (l[2].equals("RESB") || l[2].equals("RESW")){
+                    if (l[2].equals("RESB") || l[2].equals("RESW")|| l[2].equals("RESDW")){
                         ObjectCode.remove(ObjectCode.size()-1);
                     }else v = 1;
                 }
                 continue;
             }
-            if (line[2].equals("RESB") || line[2].equals("RESW") || line[0].equals("BASE") ||line[2].equals("EQU")){
+            if (line[2].equals("RESB") || line[2].equals("RESW")|| line[2].equals("RESDW") || line[0].equals("BASE") ||line[2].equals("EQU")){
                 continue;
             }
             else {
@@ -84,10 +86,10 @@ public class Records {
                                     ResetTRecordAndTotalLength = true;
                                 }else
                                 {
-                                    String TObjCode = line[line.length - 1];
-                                    TRecord = TRecord+"."+TObjCode;
-                                    TRECORD.add(TRecord);
+                                    String ObjCode = line[line.length - 1];
+                                    TRecord = TRecord+"."+ObjCode;
                                     ResetTRecordAndTotalLength = true;
+                                    addRecord = true;
                                 }
                                 break;
                             case 28:
@@ -97,18 +99,18 @@ public class Records {
                                     ResetTRecordAndTotalLength = true;
                                 }else
                                 {
-                                    String TObjCode = line[line.length - 1];
-                                    TRecord = TRecord+"."+TObjCode;
-                                    TRECORD.add(TRecord);
+                                    String ObjCode = line[line.length - 1];
+                                    TRecord = TRecord+"."+ObjCode;
                                     ResetTRecordAndTotalLength = true;
+                                    addRecord = true;
                                 }
                                 break;
                             case 29:
                                 if (length == 2){
-                                    String TObjCode = line[line.length - 1];
-                                    TRecord = TRecord+"."+TObjCode;
-                                    TRECORD.add(TRecord);
+                                    String ObjCode = line[line.length - 1];
+                                    TRecord = TRecord+"."+ObjCode;
                                     ResetTRecordAndTotalLength = true;
+                                    addRecord = true;
                                 }else {
                                     TRecord = TRecordLenghtCalc(TRecord,nextLine[0]);
                                     TRECORD.add(TRecord);
@@ -129,6 +131,7 @@ public class Records {
                         String ObjCode = line[line.length - 1];
                         TRecord = TRecord+"."+ObjCode;
                         ResetTRecordAndTotalLength = true;
+                        addRecord = true;
 
                     }
                 }
